@@ -5,7 +5,7 @@ This is a local script for check_mk to monitoring update-state of distributions 
 * systemd-platform (for detect distribution /etc/os-release)
 * bash (cat,grep,egrep,wc,awk)
 * apt (debian-goodies) or zypper or yum (with yum-plugin-versionlock , yum-utils) or dnf (python3-dnf-plugin-versionlock)
-* extends the script by further distributions in section Main (with id from /etc/os-release)
+* extends the script by further distributions in section Main (with id from /etc/os-release), default distribution: Debian, Ubuntu, Linux Mint, raspbian, SLES12+, opensuse, Redhat, CentOS, OracleLinux
 
 ## Features
 * detected number of all updates
