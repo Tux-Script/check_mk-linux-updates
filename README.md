@@ -7,6 +7,18 @@ This ist a local script for check_mk to monitoring update-state of distributions
 * apt (debian-goodies) or zypper or yum (with yum-plugin-versionlock , yum-utils) or dnf (python3-dnf-plugin-versionlock)
 * extends the script by further distributions in section Main (with id from /etc/os-release)
 
+## Features
+* detected number of all updates
+* detected number of all security updates
+* detected number of services or processes to reload
+* detected required system reboot
+* detected number of package locks 
+* list alle packages to update
+* create metrics
+* creates status based on the thresholds for the metrics
+* (detected number of all used sources)
+* (detected number of package locks)
+
 ## Use local-check in check_mk
 * supportet short output and long output. recommend to use long output. (Edit views for show column with long output)
 * use in /usr/lib/check_mk_agent/local/CACHETIME/linux-updates.sh
