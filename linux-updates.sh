@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt on Debian|Ubuntu|Mint|raspbian
 # systemd-platform for distribution detect required
-# Version 0.0
+# Version 0.3
 # Script by Dipl.-Inf. Christoph Pregla
 
 ###########################################
