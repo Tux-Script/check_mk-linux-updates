@@ -9,10 +9,10 @@ Requirements:
 
 Use local-check in check_mk:
 * supportet short output and long output. recommend to use long output. (Edit views for show column with long output)
-* use in /usr/lib/check_mk/local/<cachetime>/linux-updates.sh
+* use in /usr/lib/check_mk_agent/local/<cachetime>/linux-updates.sh
 * cache_time at least 30min
 * don't use without cache-time
-* in cee use bakery witch custom-checks  "linux-updates/lib/local/3600/linux-updates.sh"
+* in cee use bakery witch custom-checks  "linux-updates/lib/local/1800/linux-updates.sh"
 * configure thresholds for all in script on section "Declaration var / const /command" 
 
 Default thresholds in linux-updates.sh: 
