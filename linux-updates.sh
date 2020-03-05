@@ -149,10 +149,10 @@ function zypper_checkrestart() {
 }
 
 function yum_get_number_of_updates() {
-	echo "`$YUM check-update | $EGREP -v '(^(Geladene|Loading| * )|running|available|Loaded)' | $WC -l`"
+	echo "`$YUM check-update | $EGREP -v '(^(Geladene|Loading| * )|running|installed|Loaded)' | $WC -l`"
 }
 function yum_get_number_of_sec_updates() {
-	echo "`$YUM check-update | $EGREP "^Security" | $GREP -v "running" | $AWK ' { print $2 } ' | $WC -l`"
+	echo "`$YUM check-update | $EGREP "^Security" | $EGREP -v "(running|installed)" | $AWK ' { print $2 } ' | $WC -l`"
 }
 #require package yum-plugin-versionlock
 function yum_get_number_of_locks() {
@@ -163,7 +163,7 @@ function yum_get_number_of_sources() {
 	echo "`$YUM repolist enabled | $EGREP -v "(Repo-ID|Plugins|repolist)" | $WC -l`"
 }
 function yum_get_list_all_updates() {
-	lines="`$YUM check-update | $EGREP -v '(^(Geladene|Loading| ? |$)|running|available|Loaded)' | $AWK ' { if ($1=="Security:") { print $2 } else { print $1 } } '`"
+	lines="`$YUM check-update | $EGREP -v '(^(Geladene|Loading| ? |$)|running|installed|Loaded)' | $AWK ' { if ($1=="Security:") { print $2 } else { print $1 } } '`"
 	list=""
 	for line in $lines
 	do
