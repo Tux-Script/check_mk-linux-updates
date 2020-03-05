@@ -6,6 +6,7 @@
 # systemd-platform for distribution detect required
 # Version 1.0
 # Script by Dipl.-Inf. Christoph Pregla
+# License: GNU GPL v3
 
 ###########################################
 ### Declaration var / const /command	###
