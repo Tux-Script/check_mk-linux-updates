@@ -22,3 +22,7 @@ Default thresholds in linux-updates.sh:
 * updates_sec_crit=3
 * locks_warn=3
 * locks_crit=5
+* reboot_warn  (== no warn)
+* reboot_crit=1
+* reload_warn=1
+* reload_crit=10
