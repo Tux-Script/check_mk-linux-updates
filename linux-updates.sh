@@ -103,7 +103,7 @@ function apt_checkrestart() {
                 nr_reboot="`$CAT $rrpkgs_path | $WC -l`"
                 restart="$nr_reboot packages require system reboot"
         fi
-        if [ $nr_reload > 0 ]; then
+        if [ $nr_reload -gt 0 ]; then
                 if [ -z "$restart" ]; then
                         restart="$nr_reload services required reload"
                 else
@@ -136,10 +136,10 @@ function zypper_get_list_all_updates() {
 function zypper_checkrestart() {
         nr_reload="`$ZYPPER ps -s | $EGREP "^[0-9]* " | $AWK -F '|' ' { print $6 } ' | uniq | $WC -l`"
         nr_reboot="`$ZYPPER ps -s | $GREP -q 'kernel' | $WC -l`"
-        if [ $nr_reboot > 0 ]; then
+        if [ $nr_reboot -gt 0 ]; then
                 restart="system reboot required"
         fi
-        if [ $nr_reload > 0 ]; then
+        if [ $nr_reload -gt 0 ]; then
                 if [ -z "$restart" ]; then
                         restart="$nr_reload services required reload"
                 else
@@ -175,10 +175,10 @@ function yum_get_list_all_updates() {
 function yum_checkrestart() {
         nr_reload="`$NEEDSRESTARTING | $EGREP -v "^1 :" | $EGREP "[0-9]* :" | $WC -l`"
         nr_reboot="`$NEEDSRESTARTING | $EGREP "^1 :" | $WC -l`"
-        if [ $nr_reboot > 0 ]; then
+        if [ $nr_reboot -gt 0 ]; then
                 restart="system reboot required"
         fi
-        if [ $nr_reload > 0 ]; then
+        if [ $nr_reload -gt 0 ]; then
                 if [ -z "$restart" ]; then
                         restart="$nr_reload processes required reload"
                 else
