@@ -2,9 +2,9 @@
 #################################################################################################################
 #                                  CMK-Script for monitoring updates on linux                                   #
 #################################################################################################################
-# Supported are apt,yum,zypper on Debian|Ubuntu|Mint|raspbian, RHEL|CentOS|OracleLinux, SLES|opensuse
+# Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 0.9
+# Version 1.0
 # Script by Dipl.-Inf. Christoph Pregla
 
 ###########################################
@@ -44,6 +44,7 @@ declare -r APT="/usr/bin/apt"
 declare -r APTMARK="/usr/bin/apt-mark"
 declare -r ZYPPER="/usr/bin/zypper"
 declare -r YUM="/usr/bin/yum"
+declare -r DNF="/usr/bin/dnf"
 
 ###########################################
 ### 	Declaration functions		###
@@ -133,6 +134,28 @@ function yum_check_package() {
 	echo "false"
 }
 
+function dnf_get_number_of_updates() {
+	echo "`$DNF check-update | $EGREP -v '(^(Geladene|Loading| * )|Metadaten|metadata|running|available|Loaded)' | $WC -l`" 
+}
+function dnf_get_number_of_sec_updates() {
+	echo "`$DNF check-update | $EGREP "^Security" | $GREP -v "running" | $AWK ' { print $2 } ' | $WC -l`"
+}
+function dnf_get_number_of_locks() {
+	#TODO
+	echo 0
+}
+function dnf_get_number_of_sources() {
+	echo "`$DNF repolist --enabled | $GREP -v "\-ID" | $WC -l`"
+}
+function dnf_get_list_all_updates() {
+	lines="`$DNF check-update | $EGREP -v '(^(Geladene|Loading| ? |$)|Metadaten|metadata|running|available|Loaded)' | $AWK ' { if ($1=="Security:") { print $2 } else { print $1 } } '`"
+	list=""
+	for line in $lines
+	do
+		list="$list$line "
+	done
+	echo $list
+}
 ###############
 function apt_check_updates() {
 	nr_updates=`apt_get_number_of_updates`
@@ -177,6 +200,18 @@ function yum_check_updates() {
 	#	cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n!!package locks required yum-plugin-versionlock!!\\n$nr_sources used Paket-Sources"
 	#fi
 }
+
+function dnf_check_updates() {
+	nr_updates=`dnf_get_number_of_updates`
+	nr_sec_updates=`dnf_get_number_of_sec_updates`
+	nr_locks=`dnf_get_number_of_locks`
+	nr_sources=`dnf_get_number_of_sources`
+	list_updates=`dnf_get_list_all_updates`
+
+	cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit"
+	cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources"
+	cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources"
+}
 ################
 function generate_cmk_output() {
 	#last "\\n", because cmk append metrics thresholds information at last line
@@ -213,6 +248,9 @@ case "$dist_id" in
 		;;
 	*centos*|*rhel*|*ol*)
 		yum_check_updates
+		;;
+	*fedora*)
+		dnf_check_updates
 		;;
 	*)
 		cmk_describe="Distribution failed to detect - not on supported list, check for add ID from /etc/os-release to cmk-script."
