@@ -2,9 +2,9 @@
 #################################################################################################################
 #                                  CMK-Script for monitoring updates on linux                                   #
 #################################################################################################################
-# Supported are apt on Debian|Ubuntu|Mint|raspbian
+# Supported are apt,zypper on Debian|Ubuntu|Mint|raspbian , SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 0.3
+# Version 0.6
 # Script by Dipl.-Inf. Christoph Pregla
 
 ###########################################
@@ -42,12 +42,14 @@ declare -r WC="/usr/bin/wc"
 
 declare -r APT="/usr/bin/apt"
 declare -r APTMARK="/usr/bin/apt-mark"
+declare -r ZYPPER="/usr/bin/zypper"
 
 ###########################################
 ### 	Declaration functions		###
 ###########################################
 
 declare -f apt_check_updates
+declare -f zypper_check_updates
 declare -f generate_cmk_output
 declare -f output
 
@@ -78,6 +80,28 @@ function apt_get_list_all_updates() {
 	echo $list
 }
 
+function zypper_get_number_of_updates() {
+	echo "`$ZYPPER --non-interactive list-patches | $GREP SLE | $WC -l`"
+}
+function zypper_get_number_of_sec_updates() {
+	echo "`$ZYPPER --non-interactive list-patches | $GREP SLE | $GREP security | $WC -l`"
+}
+function zypper_get_number_of_locks() {
+	echo "`$ZYPPER ll | $EGREP "^[0-9]" | $WC -l`"
+}
+function zypper_get_number_of_sources() {
+	echo "`$ZYPPER repos | $EGREP "^[0-9]" | $AWK -F '|' ' { print $2 } '| $WC -l`"
+}
+function zypper_get_list_all_updates() {
+	lines="`$ZYPPER --non-interactive list-updates | $GREP SLE | $AWK -F '|' ' { print $3 } '`"
+	list=""
+	for line in $lines
+	do
+		list="$list$line "
+	done
+	echo $list
+}
+
 ###############
 function apt_check_updates() {
 	nr_updates=`apt_get_number_of_updates`
@@ -89,6 +113,18 @@ function apt_check_updates() {
 	cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit"
 	cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources"
 	cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources"
+}
+
+function zypper_check_updates() {
+	nr_updates=`zypper_get_number_of_updates`
+	nr_sec_updates=`zypper_get_number_of_sec_updates`
+	nr_locks=`zypper_get_number_of_locks`
+	nr_sources=`zypper_get_number_of_sources`
+	list_updates=`zypper_get_list_all_updates`
+
+	cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit"
+	cmk_describe="$nr_updates Patches ($list_updates), $nr_sec_updates Security Patches, $nr_locks packets are locked, $nr_sources used Paket-Sources"	
+	cmk_describe_long="$nr_updates Patches ($list_updates) \\n$nr_sec_updates Security Patches \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources"	
 }
 
 ################
@@ -122,10 +158,8 @@ case "$dist_id" in
 	debian|ubuntu|linuxmint|raspbian)
 		apt_check_updates
 		;;
-	*suse*)
-		cmk_describe="zypper detect, but not supported"
-		cmk_describe_long="zypper detect, but not supported"
-		cmk_status=3
+	*suse*|*sles*|*opensuse*)
+		zypper_check_updates
 		;;
 	*)
 		cmk_describe="Distribution failed to detect - not on supported list, check for add ID from /etc/os-release to cmk-script."
@@ -134,3 +168,4 @@ case "$dist_id" in
 		;;
 esac
 output;
+exit 0;
