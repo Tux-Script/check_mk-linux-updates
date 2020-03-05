@@ -7,6 +7,7 @@
 # Version 1.0
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
+# https://github.com/Tux-Script/check_mk-linux-updates
 
 ###########################################
 ### Declaration var / const /command	###
