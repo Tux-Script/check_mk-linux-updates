@@ -1,6 +1,8 @@
 # check_mk-linux-updates
 This is a local script for check_mk to monitoring update-state of distributions with apt, zypper, yum or dnf
 
+testet in cee-1.6.0
+
 ## Requirements
 * systemd-platform (for detect distribution /etc/os-release)
 * bash (cat,grep,egrep,wc,awk)
