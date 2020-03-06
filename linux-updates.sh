@@ -178,25 +178,18 @@ function yum_get_list_all_updates() {
 }
 #require yum-utils
 function yum_checkrestart() {
-	if yum_check_package "yum-utils" ; then
-		nr_reload="`$NEEDSRESTARTING | $EGREP -v '^1 :' | $EGREP '[0-9]* :' | $WC -l`"
-		nr_reboot="`$NEEDSRESTARTING | $EGREP '^1 :' | $WC -l`"
-		if [ $nr_reboot -gt 0 ]; then
-			restart="system reboot required"
- 		fi
-		if [ $nr_reload -gt 0 ]; then
- 			if [ -z "$restart" ]; then
-				restart="$nr_reload processes required reload"
- 			else
-				restart="$restart, $nr_reload processes required reload"
-			fi
+	nr_reload="`$NEEDSRESTARTING | $EGREP -v '^1 :' | $EGREP '[0-9]* :' | $WC -l`"
+	nr_reboot="`$NEEDSRESTARTING | $EGREP '^1 :' | $WC -l`"
+	if [ $nr_reboot -gt 0 ]; then
+		restart="system reboot required"
+ 	fi
+	if [ $nr_reload -gt 0 ]; then
+ 		if [ -z "$restart" ]; then
+			restart="$nr_reload processes required reload"
+ 		else
+			restart="$restart, $nr_reload processes required reload"
 		fi
-	else
-		nr_reload=0
-		nr_reboot=0
-		restart="required yum-utils for check restart"
-	fi
-		
+	fi	
 }
 function yum_check_package() {
 	package="$1"
@@ -266,18 +259,16 @@ function yum_check_updates() {
 
 	yum_checkrestart
 
-        #TODO: check yum-plugin-versionlock; create function yum_check_package with Parameter "<packagename>"
-        #cpackage=`yum_check_package "yum-plugin-versionlock"`
-        #if [ "$cpackage" == "true" ]; then
+        if [ yum_check_package "yum-plugin-versionlock" ]; then
                 nr_locks=`yum_get_number_of_locks`
                 cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
                 cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
                 cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\n$restart"
-        #else
-        #       nr_locks=0
-        #       cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, !!package locks required yum-plugin-versionlock!!, $nr_sources used Paket-Sources"
-        #       cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n!!package locks required yum-plugin-versionlock!!\\n$nr_sources used Paket-Sources"
-        #fi
+        else
+               nr_locks=0
+               cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, !!package locks required yum-plugin-versionlock!!, $nr_sources used Paket-Sources"
+               cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n!!package locks required yum-plugin-versionlock!!\\n$nr_sources used Paket-Sources"
+        fi
 }
 
 function dnf_check_updates() {
