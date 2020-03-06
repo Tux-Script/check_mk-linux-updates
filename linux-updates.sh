@@ -270,16 +270,16 @@ function yum_check_updates() {
 
 	yum_checkrestart
 
-        if [ yum_check_package "yum-plugin-versionlock" ]; then
-                nr_locks=`yum_get_number_of_locks`
-                cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
-                cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
-                cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\n$restart"
-        else
+#        if [ yum_check_package "yum-plugin-versionlock" ]; then
+#                nr_locks=`yum_get_number_of_locks`
+#                cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
+#                cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
+#               cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\n$restart"
+#        else
                nr_locks=0
                cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, !!package locks required yum-plugin-versionlock!!, $nr_sources used Paket-Sources"
                cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n!!package locks required yum-plugin-versionlock!!\\n$nr_sources used Paket-Sources"
-        fi
+#        fi
 }
 
 function dnf_check_updates() {
