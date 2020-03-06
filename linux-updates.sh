@@ -241,6 +241,8 @@ function apt_check_updates() {
 #	if [ apt_check_package "debian-goodies" ]; then
 #		apt_checkrestart
 #	else
+		nr_reboot=0
+		nr_reload=0
 		restart="require debian-goodies for check restart"
 #	fi
         cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
