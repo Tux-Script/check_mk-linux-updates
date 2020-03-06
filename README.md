@@ -19,7 +19,7 @@ testet in cee-1.6.0
 * create metrics
 * creates status based on the thresholds for the metrics
 * (detected number of all used sources)
-* (detected number of package locks)
+* detected number of package locks (dnf in progress)
 
 ## Use local-check in check_mk
 * supportet short output and long output. recommend to use long output. (Edit views for show column with long output)
