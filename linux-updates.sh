@@ -122,10 +122,10 @@ function zypper_get_number_of_locks() {
 	echo "`$ZYPPER ll | $EGREP "^[0-9]" | $WC -l`"
 }
 function zypper_get_number_of_sources() {
-	echo "`$ZYPPER repos | $EGREP "^[0-9]" | $AWK -F '|' ' { print $2 } '| $WC -l`"
+	echo "`$ZYPPER repos | $EGREP '^[0-9]' | $AWK -F '|' ' { print $2 } '| $WC -l`"
 }
 function zypper_get_list_all_updates() {
-	lines="`$ZYPPER --non-interactive list-updates | $GREP SLE | $AWK -F '|' ' { print $3 } '`"
+	lines="`$ZYPPER --non-interactive list-updates | $GREP 'SLE' | $AWK -F '|' ' { print $3 } '`"
 	list=""
 	for line in $lines
 	do
@@ -134,7 +134,7 @@ function zypper_get_list_all_updates() {
 	echo $list
 }
 function zypper_checkrestart() {
-        nr_reload="`$ZYPPER ps -s | $EGREP "^[0-9]* " | $AWK -F '|' ' { print $6 } ' | uniq | $WC -l`"
+        nr_reload="`$ZYPPER ps -s | $EGREP '^[0-9]* ' | $AWK -F '|' ' { print $6 } ' | uniq | $WC -l`"
         nr_reboot="`$ZYPPER ps -s | $GREP -q 'kernel' | $WC -l`"
         if [ $nr_reboot -gt 0 ]; then
                 restart="system reboot required"
@@ -152,7 +152,7 @@ function yum_get_number_of_updates() {
 	echo "`$YUM check-update | $EGREP -v '(^(Geladene|Loading| ? |$)|running|installed|Loaded)' | $WC -l`"
 }
 function yum_get_number_of_sec_updates() {
-	echo "`$YUM check-update | $EGREP "^Security" | $EGREP -v "(running|installed)" | $AWK ' { print $2 } ' | $WC -l`"
+	echo "`$YUM check-update | $EGREP '^Security' | $EGREP -v '(running|installed)' | $AWK ' { print $2 } ' | $WC -l`"
 }
 #require package yum-plugin-versionlock
 function yum_get_number_of_locks() {
@@ -160,7 +160,7 @@ function yum_get_number_of_locks() {
 	echo "0"
 }
 function yum_get_number_of_sources() {
-	echo "`$YUM repolist enabled | $EGREP -v "(Repo-ID|Plugins|repolist)" | $WC -l`"
+	echo "`$YUM repolist enabled | $EGREP -v '(Repo-ID|Plugins|repolist)' | $WC -l`"
 }
 function yum_get_list_all_updates() {
 	lines="`$YUM check-update | $EGREP -v '(^(Geladene|Loading| ? |$)|running|installed|Loaded)' | $AWK ' { if ($1=="Security:") { print $2 } else { print $1 } } '`"
@@ -173,8 +173,8 @@ function yum_get_list_all_updates() {
 }
 #require yum-utils
 function yum_checkrestart() {
-        nr_reload="`$NEEDSRESTARTING | $EGREP -v "^1 :" | $EGREP "[0-9]* :" | $WC -l`"
-        nr_reboot="`$NEEDSRESTARTING | $EGREP "^1 :" | $WC -l`"
+        nr_reload="`$NEEDSRESTARTING | $EGREP -v '^1 :# | $EGREP '[0-9]* :' | $WC -l`"
+        nr_reboot="`$NEEDSRESTARTING | $EGREP '^1 :' | $WC -l`"
         if [ $nr_reboot -gt 0 ]; then
                 restart="system reboot required"
         fi
@@ -196,7 +196,7 @@ function dnf_get_number_of_updates() {
 	echo "`$DNF check-update | $EGREP -v '(^(Geladene|Loading| * )|Metadaten|metadata|running|available|Loaded)' | $WC -l`" 
 }
 function dnf_get_number_of_sec_updates() {
-	echo "`$DNF check-update | $EGREP "^Security" | $GREP -v "running" | $AWK ' { print $2 } ' | $WC -l`"
+	echo "`$DNF check-update | $EGREP '^Security' | $GREP -v 'running' | $AWK ' { print $2 } ' | $WC -l`"
 }
 function dnf_get_number_of_locks() {
 	#TODO
@@ -293,7 +293,7 @@ function output() {
 
 #Check Systemd os-release file
 if test -f /etc/os-release ; then
-	dist_id=`$CAT /etc/os-release | $EGREP -i "^id=" | $AWK -F '=' ' { print $2 } '`
+	dist_id=`$CAT /etc/os-release | $EGREP -i '^id=' | $AWK -F '=' ' { print $2 } '`
 else
 	cmk_describe="Distribution failed to detect - no systemd platform?"
 	cmk_describe_long="Distribution failed to detect - no systemd platform?"
