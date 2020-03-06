@@ -18,7 +18,7 @@ testet in cee-1.6.0
 * list alle packages to update
 * create metrics
 * creates status based on the thresholds for the metrics
-* (detected number of all used sources)
+* detected number of all used sources
 * detected number of package locks (dnf in progress)
 
 ## Use local-check in check_mk
