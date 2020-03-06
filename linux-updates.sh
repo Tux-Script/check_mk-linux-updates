@@ -173,18 +173,25 @@ function yum_get_list_all_updates() {
 }
 #require yum-utils
 function yum_checkrestart() {
-        nr_reload="`$NEEDSRESTARTING | $EGREP -v '^1 :# | $EGREP '[0-9]* :' | $WC -l`"
-        nr_reboot="`$NEEDSRESTARTING | $EGREP '^1 :' | $WC -l`"
-        if [ $nr_reboot -gt 0 ]; then
-                restart="system reboot required"
-        fi
-        if [ $nr_reload -gt 0 ]; then
-                if [ -z "$restart" ]; then
-                        restart="$nr_reload processes required reload"
-                else
-                        restart="$restart, $nr_reload processes required reload"
-                fi
-        fi
+	if yum_check_package "yum-utils" ; then
+		nr_reload="`$NEEDSRESTARTING | $EGREP -v '^1 :# | $EGREP '[0-9]* :' | $WC -l`"
+		nr_reboot="`$NEEDSRESTARTING | $EGREP '^1 :' | $WC -l`"
+		if [ $nr_reboot -gt 0 ]; then
+			restart="system reboot required"
+ 		fi
+		if [ $nr_reload -gt 0 ]; then
+ 			if [ -z "$restart" ]; then
+				restart="$nr_reload processes required reload"
+ 			else
+				restart="$restart, $nr_reload processes required reload"
+			fi
+		fi
+	else
+		nr_reload=0
+		nr_reboot=0
+		restart="required yum-utils for check restart"
+	fi
+		
 }
 function yum_check_package() {
 	package="$1"
