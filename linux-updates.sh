@@ -179,7 +179,7 @@ function yum_get_list_all_updates() {
 #require yum-utils
 function yum_checkrestart() {
 	if yum_check_package "yum-utils" ; then
-		nr_reload="`$NEEDSRESTARTING | $EGREP -v '^1 :# | $EGREP '[0-9]* :' | $WC -l`"
+		nr_reload="`$NEEDSRESTARTING | $EGREP -v '^1 :' | $EGREP '[0-9]* :' | $WC -l`"
 		nr_reboot="`$NEEDSRESTARTING | $EGREP '^1 :' | $WC -l`"
 		if [ $nr_reboot -gt 0 ]; then
 			restart="system reboot required"
