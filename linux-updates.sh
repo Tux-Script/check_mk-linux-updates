@@ -165,13 +165,13 @@ function yum_get_number_of_sec_updates() {
 }
 #require package yum-plugin-versionlock
 function yum_get_number_of_locks() {
-	if yum_check_package "yum-plugin-versionlock"; then
-		locks1="`$YUM versionlock list | $EGREP -v '^(Geladene|Loaded|versionlock list done$)' | $WC -l`"
-		locks2="`cat /etc/yum.conf /etc/yum.repos.d/*.repo | grep 'exclude' | awk -F '=' ' {  print $2 } ' | wc -w`"
-		echo $(($locks1 + $locks2)) 
-	else
+#	if yum_check_package "yum-plugin-versionlock"; then
+#		locks1="`$YUM versionlock list | $EGREP -v '^(Geladene|Loaded|versionlock list done$)' | $WC -l`"
+#		locks2="`cat /etc/yum.conf /etc/yum.repos.d/*.repo | grep 'exclude' | awk -F '=' ' {  print $2 } ' | wc -w`"
+#		echo $(($locks1 + $locks2)) 
+#	else
 		echo "`$CAT /etc/yum.conf /etc/yum.repos.d/*.repo | $GREP 'exclude' | $AWK -F '=' ' {  print $2 } ' | $WC -w`"
-	fi
+#	fi
 }
 function yum_get_number_of_sources() {
 	echo "`$YUM repolist enabled | $EGREP -v '(Repo-ID|Plugins|repolist)' | $WC -l`"
@@ -200,14 +200,14 @@ function yum_checkrestart() {
 		fi
 	fi	
 }
-function yum_check_package() {
-	package="$1"
-	if $YUM list installed "$package" > /dev/null 2>$1; then
-                true
-        else
-                false
-        fi
-}
+#function yum_check_package() {
+#	package="$1"
+#	if $YUM list installed "$package" > /dev/null 2>&1; then
+#                true
+#        else
+#                false
+#        fi
+#}
 
 function dnf_get_number_of_updates() {
 	echo "`$DNF check-update | $EGREP -v '(^(Geladene|Loading| * )|Metadaten|metadata|running|available|Loaded)' | $WC -l`" 
