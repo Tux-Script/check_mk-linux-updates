@@ -188,8 +188,11 @@ function yum_checkrestart() {
 }
 function yum_check_package() {
 	package="$1"
-	#TODO
-	echo "false"
+	if $YUM list installed "$package" > /dev/null 2>$1; then
+                true
+        else
+                false
+        fi
 }
 
 function dnf_get_number_of_updates() {
