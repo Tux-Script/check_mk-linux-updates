@@ -95,7 +95,7 @@ function apt_get_list_all_updates() {
 }
 #require debian-goodies
 function apt_checkrestart() {
-        nr_reload="`$CHECKRESTART | $GREP restart | $WC -l`"
+	nr_reload="`$CHECKRESTART | $GREP restart | $WC -l`"
         rrpkgs_path="/var/run/reboot-required.pkgs"
         restart=""
         nr_packages_restart=0
@@ -110,6 +110,15 @@ function apt_checkrestart() {
                         restart="$restart, $nr_reload services required reload"
                 fi
         fi
+}
+function apt_check_package() {
+	package="$1"
+	check="`$APT list | $GREP 'debian-goodies/'`"
+	if [ $check -ge 1 ]; then
+		echo true;
+	else
+		echo false;
+	fi
 }
 
 function zypper_get_number_of_updates() {
@@ -229,9 +238,11 @@ function apt_check_updates() {
 	nr_locks=`apt_get_number_of_locks`
 	nr_sources=`apt_get_number_of_sources`
 	list_updates=`apt_get_list_all_updates`
-
-	apt_checkrestart
-
+	if [ apt_check_package "debian-goodies" ]; then
+		apt_checkrestart
+	else
+		restart="require debian-goodies for check restart"
+	fi
         cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
         cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
         cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\$restart"	
