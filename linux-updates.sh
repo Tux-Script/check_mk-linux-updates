@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.1.2
+# Version 1.2.2
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -156,8 +156,13 @@ function yum_get_number_of_sec_updates() {
 }
 #require package yum-plugin-versionlock
 function yum_get_number_of_locks() {
-	#TODO: check exist yum-plugin-versionlock; yum versionlock list ; check files
-	echo "0"
+	if yum_check_package "yum-plugin-versionlock"; then
+		locks1="`$YUM versionlock list | $EGREP -v '^(Geladene|Loaded|versionlock list done$)' | $WC -l`"
+		locks2="`cat /etc/yum.conf /etc/yum.repos.d/*.repo | grep 'exclude' | awk -F '=' ' {  print $2 } ' | wc -w`"
+		echo $(($locks1 + $locks2)) 
+	else
+		echo "`$CAT /etc/yum.conf /etc/yum.repos.d/*.repo | $GREP 'exclude' | $AWK -F '=' ' {  print $2 } ' | $WC -w`"
+	fi
 }
 function yum_get_number_of_sources() {
 	echo "`$YUM repolist enabled | $EGREP -v '(Repo-ID|Plugins|repolist)' | $WC -l`"
