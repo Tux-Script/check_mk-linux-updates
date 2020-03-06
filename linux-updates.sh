@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.1.1
+# Version 1.1.2
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -149,7 +149,7 @@ function zypper_checkrestart() {
 }
 
 function yum_get_number_of_updates() {
-	echo "`$YUM check-update | $EGREP -v '(^(Geladene|Loading| * )|running|installed|Loaded)' | $WC -l`"
+	echo "`$YUM check-update | $EGREP -v '(^(Geladene|Loading| ? |$)|running|installed|Loaded)' | $WC -l`"
 }
 function yum_get_number_of_sec_updates() {
 	echo "`$YUM check-update | $EGREP "^Security" | $EGREP -v "(running|installed)" | $AWK ' { print $2 } ' | $WC -l`"
