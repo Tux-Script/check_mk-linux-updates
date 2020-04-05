@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.4.4
+# Version 1.4.5
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -111,7 +111,7 @@ function apt_checkrestart() {
 			if [ -z "$restart" ]; then
        	                	restart="$nr_reload services required reload"
        	        	else
-       	        	        restart="$restart, $nr_reload serices required reload"
+       	        	        restart="$restart, $nr_reload services required reload"
        	        	fi
 		else
 			if [ -z "$restart" ]; then
