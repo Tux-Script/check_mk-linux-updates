@@ -84,7 +84,6 @@ function apt_get_number_of_sources() {
 	echo "`$GREP -r --include '*.list' '^deb ' /etc/apt/sources.list /etc/apt/sources.list.d/ | $WC -l`"
 }
 function apt_get_list_all_updates() {
-
 	lines="`$APT list --upgradable 2> /dev/null | $EGREP '(aktualisierbar|upgradable)' | $AWK -F '/' ' { print $1 } '`"
 	list=""
 	for line in $lines 
@@ -96,29 +95,29 @@ function apt_get_list_all_updates() {
 #require debian-goodies
 function apt_checkrestart() {
 	rrpkgs_path="/var/run/reboot-required.pkgs"
-       	restart=""
+	restart=""
 	if $APT list 2>/dev/null | $GREP 'debian-goodies/' &>/dev/null; then
 		nr_reload="`$CHECKRESTART 2>/dev/null| $GREP restart | $WC -l`"
 		if  test -f "$rrpkgs_path" ; then
-       	        	nr_reboot="`$CAT $rrpkgs_path | $WC -l`"
+			nr_reboot="`$CAT $rrpkgs_path | $WC -l`"
 			restart="$nr_reboot packages require system reboot"
-       		fi
+	fi
 	else
 		nr_reload=0
        		if  test -f "$rrpkgs_path" ; then
-       		        nr_reboot="`$CAT $rrpkgs_path | $WC -l`"
+			nr_reboot="`$CAT $rrpkgs_path | $WC -l`"
 			restart="$nr_reboot packages require system reboot, package debian-goodies required!!"
 		else
 			restart="package debian-goodies required!!"
 		fi
 	fi
-       	if [ $nr_reload -gt 0 ]; then
+	if [ $nr_reload -gt 0 ]; then
 		if [ -z "$restart" ]; then
-       	               	restart="$nr_reload services required reload"
-       	       	else
-       	       	        restart="$restart, $nr_reload services required reload"
-       	       	fi
-       	fi
+			restart="$nr_reload services required reload"
+		else
+			restart="$restart, $nr_reload services required reload"
+		fi
+	fi
 }
 
 function zypper_get_number_of_updates() {
@@ -143,18 +142,18 @@ function zypper_get_list_all_updates() {
 	echo $list
 }
 function zypper_checkrestart() {
-        nr_reload="`$ZYPPER ps -s | $EGREP '^[0-9]* ' | $AWK -F '|' ' { print $6 } ' | uniq | $WC -l`"
-        nr_reboot="`$ZYPPER ps -s | $GREP -q 'kernel' | $WC -l`"
-        if [ $nr_reboot -gt 0 ]; then
-                restart="system reboot required"
-        fi
-        if [ $nr_reload -gt 0 ]; then
-                if [ -z "$restart" ]; then
-                        restart="$nr_reload services required reload"
-                else
-                        restart="$restart, $nr_reload services required reload"
-                fi
-        fi
+	nr_reload="`$ZYPPER ps -s | $EGREP '^[0-9]* ' | $AWK -F '|' ' { print $6 } ' | uniq | $WC -l`"
+	nr_reboot="`$ZYPPER ps -s | $GREP -q 'kernel' | $WC -l`"
+	if [ $nr_reboot -gt 0 ]; then
+		restart="system reboot required"
+	fi
+	if [ $nr_reload -gt 0 ]; then
+		if [ -z "$restart" ]; then
+			restart="$nr_reload services required reload"
+		else
+			restart="$restart, $nr_reload services required reload"
+		fi
+	fi
 }
 
 function yum_get_number_of_updates() {
@@ -192,11 +191,11 @@ function yum_checkrestart() {
 		nr_reboot="`$NEEDSRESTARTING | $EGREP '^1 :' | $WC -l`"
 		if [ $nr_reboot -gt 0 ]; then
 			restart="system reboot required"
- 		fi
+		fi
 		if [ $nr_reload -gt 0 ]; then
- 			if [ -z "$restart" ]; then
+			if [ -z "$restart" ]; then
 				restart="$nr_reload processes required reload"
- 			else
+			else
 				restart="$restart, $nr_reload processes required reload"
 			fi
 		fi
@@ -236,12 +235,12 @@ function apt_check_updates() {
 	nr_locks=`apt_get_number_of_locks`
 	nr_sources=`apt_get_number_of_sources`
 	list_updates=`apt_get_list_all_updates`
-        
+
 	apt_checkrestart
 
 	cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
-        cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
-        cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\$restart"	
+	cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
+	cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\$restart"	
 }
 
 function zypper_check_updates() {
@@ -253,9 +252,9 @@ function zypper_check_updates() {
 
 	zypper_checkrestart
 
-        cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
-        cmk_describe="$nr_updates Patches ($list_updates), $nr_sec_updates Security Patches, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
-        cmk_describe_long="$nr_updates Patches ($list_updates) \\n$nr_sec_updates Security Patches \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\n$restart"
+	cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
+	cmk_describe="$nr_updates Patches ($list_updates), $nr_sec_updates Security Patches, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
+	cmk_describe_long="$nr_updates Patches ($list_updates) \\n$nr_sec_updates Security Patches \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\n$restart"
 }
 
 function yum_check_updates() {
@@ -266,17 +265,17 @@ function yum_check_updates() {
 
 	yum_checkrestart
 
-        if $YUM list installed "yum-plugin-versionlock" -q &> /dev/null; then
-                nr_locks=`yum_get_number_of_locks`
-                cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
-                cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
-               cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\n$restart"
-        else
-               nr_locks=0
-	       cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
-               cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, !!package locks required yum-plugin-versionlock!!, $nr_sources used Paket-Sources"
-               cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n!!package locks required yum-plugin-versionlock!!\\n$nr_sources used Paket-Sources"
-        fi
+	if $YUM list installed "yum-plugin-versionlock" -q &> /dev/null; then
+		nr_locks=`yum_get_number_of_locks`
+		cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
+		cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
+		cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\n$restart"
+	else
+		nr_locks=0
+		cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
+		cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, !!package locks required yum-plugin-versionlock!!, $nr_sources used Paket-Sources"
+		cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n!!package locks required yum-plugin-versionlock!!\\n$nr_sources used Paket-Sources"
+	fi
 }
 
 function dnf_check_updates() {
