@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.4.2
+# Version 1.4.4
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -95,30 +95,32 @@ function apt_get_list_all_updates() {
 }
 #require debian-goodies
 function apt_checkrestart() {
-	nr_reload="`$CHECKRESTART | $GREP restart | $WC -l`"
-        rrpkgs_path="/var/run/reboot-required.pkgs"
-        restart=""
-        nr_packages_restart=0
-        if  test -f "$rrpkgs_path" ; then
-                nr_reboot="`$CAT $rrpkgs_path | $WC -l`"
-                restart="$nr_reboot packages require system reboot"
-        fi
-        if [ $nr_reload -gt 0 ]; then
-                if [ -z "$restart" ]; then
-                        restart="$nr_reload services required reload"
-                else
-                        restart="$restart, $nr_reload services required reload"
-                fi
-        fi
-}
-function apt_check_package() {
-	package="$1"
-	check="`$APT list | $GREP 'debian-goodies/'`"
-#	if [ $check -ge 1 ]; then
-#		echo true;
-#	else
-#		echo false;
-#	fi
+	if $APT list 2>/dev/null | $GREP 'debian-gooedies/' &>/dev/null; then
+		nr_reload="`$CHECKRESTART | $GREP restart | $WC -l`"
+	else
+		nr_reload=0
+	fi
+	rrpkgs_path="/var/run/reboot-required.pkgs"
+       	restart=""
+       	if  test -f "$rrpkgs_path" ; then
+       	        nr_reboot="`$CAT $rrpkgs_path | $WC -l`"
+		restart="$nr_reboot packages require system reboot"
+       	fi
+       	if [ $nr_reload -gt 0 ]; then
+		if $APT list 2>/dev/null | $GREP 'debian-gooedies/' &>/dev/null; then
+			if [ -z "$restart" ]; then
+       	                	restart="$nr_reload services required reload"
+       	        	else
+       	        	        restart="$restart, $nr_reload services required reload"
+       	        	fi
+		else
+			if [ -z "$restart" ]; then
+       	                	restart="package debian-goodies required!!"
+       	        	else
+       	        	        restart="$restart, package debian-goodies required!!"
+       	        	fi
+		fi
+       	fi
 }
 
 function zypper_get_number_of_updates() {
