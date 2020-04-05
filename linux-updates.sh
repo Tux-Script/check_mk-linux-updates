@@ -107,11 +107,11 @@ function apt_checkrestart() {
 		restart="$nr_reboot packages require system reboot"
        	fi
        	if [ $nr_reload -gt 0 ]; then
-		if $APT list 2>/dev/null | $GREP 'debian-gooedies/' &>/dev/null; then
+		if $APT list 2>/dev/null | $GREP 'debian-goodies/' &>/dev/null; then
 			if [ -z "$restart" ]; then
        	                	restart="$nr_reload services required reload"
        	        	else
-       	        	        restart="$restart, $nr_reload services required reload"
+       	        	        restart="$restart, $nr_reload serices required reload"
        	        	fi
 		else
 			if [ -z "$restart" ]; then
@@ -238,13 +238,6 @@ function apt_check_updates() {
 	nr_locks=`apt_get_number_of_locks`
 	nr_sources=`apt_get_number_of_sources`
 	list_updates=`apt_get_list_all_updates`
-#	if [ apt_check_package "debian-goodies" ]; then
-#		apt_checkrestart
-#	else
-		nr_reboot=0
-		nr_reload=0
-		restart="require debian-goodies for check restart"
-#	fi
         cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
         cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
         cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\$restart"	
