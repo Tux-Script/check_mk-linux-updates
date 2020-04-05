@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.4.1
+# Version 1.4.2
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -158,15 +158,15 @@ function zypper_checkrestart() {
 }
 
 function yum_get_number_of_updates() {
-	echo "`$YUM check-update | $EGREP -v '(^(Geladene|Loading| ? |$)|running|installed|Loaded)' | $WC -l`"
+	echo "`$YUM check-update -q | $EGREP -v '(^$|running|installed|Loaded)' | $WC -l`"
 }
 function yum_get_number_of_sec_updates() {
-	echo "`$YUM check-update | $EGREP '^Security' | $EGREP -v '(running|installed)' | $AWK ' { print $2 } ' | $WC -l`"
+	echo "`$YUM check-update -q | $EGREP '^Security' | $EGREP -v '(running|installed)' | $AWK ' { print $2 } ' | $WC -l`"
 }
 #require package yum-plugin-versionlock
 function yum_get_number_of_locks() {
 	if $YUM list installed "yum-plugin-versionlock" -q &> /dev/null; then
-		locks1="`$YUM versionlock list | $EGREP -v '^(Geladene|Loaded|versionlock list done$)' | $WC -l`"
+		locks1="`$YUM versionlock list -q | $WC -l`"
 		locks2="`cat /etc/yum.conf /etc/yum.repos.d/*.repo | grep 'exclude' | awk -F '=' ' {  print $2 } ' | wc -w`"
 		echo $(($locks1 + $locks2)) 
 	else
@@ -174,10 +174,10 @@ function yum_get_number_of_locks() {
 	fi
 }
 function yum_get_number_of_sources() {
-	echo "`$YUM repolist enabled | $EGREP -v '(Repo-ID|Plugins|repolist)' | $WC -l`"
+	echo "`$YUM repolist enabled -q | $EGREP -v 'Repo-ID' | $WC -l`"
 }
 function yum_get_list_all_updates() {
-	lines="`$YUM check-update | $EGREP -v '(^(Geladene|Loading| ? |$)|running|installed|Loaded)' | $AWK ' { if ($1=="Security:") { print $2 } else { print $1 } } '`"
+	lines="`$YUM check-update -q | $EGREP -v '(running|installed|Loaded)' | $AWK ' { if ($1=="Security:") { print $2 } else { print $1 } } '`"
 	list=""
 	for line in $lines
 	do
