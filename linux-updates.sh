@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.4.6
+# Version 1.4.7
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -166,10 +166,10 @@ function yum_get_number_of_sec_updates() {
 function yum_get_number_of_locks() {
 	if $YUM list installed "yum-plugin-versionlock" -q &> /dev/null; then
 		locks1="`$YUM versionlock list -q | $WC -l`"
-		locks2="`cat /etc/yum.conf /etc/yum.repos.d/*.repo | grep 'exclude' | awk -F '=' ' {  print $2 } ' | wc -w`"
+		locks2="`$CAT /etc/yum.conf /etc/yum.repos.d/*.repo | $GREP 'exclude' | $AWK -F '=' ' {  print $2 } ' | uniq | $WC -w`"
 		echo $(($locks1 + $locks2)) 
 	else
-		echo "`$CAT /etc/yum.conf /etc/yum.repos.d/*.repo | $GREP 'exclude' | $AWK -F '=' ' {  print $2 } ' | $WC -w`"
+		echo "`$CAT /etc/yum.conf /etc/yum.repos.d/*.repo | $GREP 'exclude' | $AWK -F '=' ' {  print $2 } ' | uniq | $WC -w`"
 	fi
 }
 function yum_get_number_of_sources() {
