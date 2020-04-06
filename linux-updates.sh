@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.4.7
+# Version 1.4.8
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -121,9 +121,12 @@ function apt_checkrestart() {
 }
 
 function zypper_get_number_of_updates() {
+	echo "`$ZYPPER --non-interactive list-updates | $GREP SLE | $WC -l`"
+}
+function zypper_get_number_of_patches() {
 	echo "`$ZYPPER --non-interactive list-patches | $GREP SLE | $WC -l`"
 }
-function zypper_get_number_of_sec_updates() {
+function zypper_get_number_of_sec_patches() {
 	echo "`$ZYPPER --non-interactive list-patches | $GREP SLE | $GREP security | $WC -l`"
 }
 function zypper_get_number_of_locks() {
@@ -133,7 +136,7 @@ function zypper_get_number_of_sources() {
 	echo "`$ZYPPER repos | $EGREP '^[0-9]' | $AWK -F '|' ' { print $2 } '| $WC -l`"
 }
 function zypper_get_list_all_updates() {
-	lines="`$ZYPPER --non-interactive list-updates | $GREP 'SLE' | $AWK -F '|' ' { print $3 } '`"
+	lines="`$ZYPPER --non-interactive list-updates | $GREP SLE | $AWK -F '|' ' { print $3 } '`"
 	list=""
 	for line in $lines
 	do
@@ -244,8 +247,9 @@ function apt_check_updates() {
 }
 
 function zypper_check_updates() {
-	nr_updates=`zypper_get_number_of_updates`
-	nr_sec_updates=`zypper_get_number_of_sec_updates`
+	nr_package=`zypper_get_number_of_updates`
+	nr_updates=`zypper_get_number_of_patches`
+	nr_sec_updates=`zypper_get_number_of_sec_patches`
 	nr_locks=`zypper_get_number_of_locks`
 	nr_sources=`zypper_get_number_of_sources`
 	list_updates=`zypper_get_list_all_updates`
@@ -253,8 +257,8 @@ function zypper_check_updates() {
 	zypper_checkrestart
 
 	cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit|Reload=$nr_reload;$reload_warn;$reload_crit"
-	cmk_describe="$nr_updates Patches ($list_updates), $nr_sec_updates Security Patches, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
-	cmk_describe_long="$nr_updates Patches ($list_updates) \\n$nr_sec_updates Security Patches \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\n$restart"
+	cmk_describe="$nr_updates Patches [$nr_package pkgs] ($list_updates), $nr_sec_updates Security Patches, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
+	cmk_describe_long="$nr_updates Patches [$nr_package pkgs] ($list_updates) \\n$nr_sec_updates Security Patches \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\n$restart"
 }
 
 function yum_check_updates() {
