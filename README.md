@@ -16,7 +16,7 @@ testet in cee-1.6.0 with SLES12, Oracle Linux 7, CentOS 7, Debian 9, Debian 10, 
 * detected number of services or processes to reload
 * detected required system reboot
 * detected number of package locks 
-* list alle packages to update
+* list all packages to update
 * create metrics
 * creates status based on the thresholds for the metrics
 * detected number of all used sources
@@ -27,7 +27,7 @@ testet in cee-1.6.0 with SLES12, Oracle Linux 7, CentOS 7, Debian 9, Debian 10, 
 * use in /usr/lib/check_mk_agent/local/CACHETIME/linux-updates.sh
 * cache_time at least 30min
 * don't use without cache-time
-* in cee use bakery witch custom-checks  "linux-updates/lib/local/1800/linux-updates.sh"
+* in cee use bakery with custom-checks  "linux-updates/lib/local/1800/linux-updates.sh"
 * configure thresholds for all in script on section "Declaration var / const /command" 
 
 ## Default thresholds in script
