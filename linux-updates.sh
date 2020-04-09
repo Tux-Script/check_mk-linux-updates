@@ -145,7 +145,7 @@ function zypper_get_list_all_updates() {
 	echo $list
 }
 function zypper_checkrestart() {
-	nr_reload="`$ZYPPER ps -s | $EGREP '^[0-9]* ' | $AWK -F '|' ' { print $6 } ' | uniq | $WC -l`"
+	nr_reload="`$ZYPPER ps -s | $EGREP '^[0-9]* ' | $AWK -F '|' ' { print $6 } ' | sort -u | $WC -l`"
 	nr_reboot="`$ZYPPER ps -s | $GREP -q 'kernel' | $WC -l`"
 	if [ $nr_reboot -gt 0 ]; then
 		restart="system reboot required"
@@ -169,10 +169,10 @@ function yum_get_number_of_sec_updates() {
 function yum_get_number_of_locks() {
 	if $YUM list installed "yum-plugin-versionlock" -q &> /dev/null; then
 		locks1="`$YUM versionlock list -q | $WC -l`"
-		locks2="`$CAT /etc/yum.conf /etc/yum.repos.d/*.repo | $GREP 'exclude' | $AWK -F '=' ' {  print $2 } ' | uniq | $WC -w`"
+		locks2="`$CAT /etc/yum.conf /etc/yum.repos.d/*.repo | $GREP 'exclude' | $AWK -F '=' ' {  print $2 } ' | sort -u | $WC -w`"
 		echo $(($locks1 + $locks2)) 
 	else
-		echo "`$CAT /etc/yum.conf /etc/yum.repos.d/*.repo | $GREP 'exclude' | $AWK -F '=' ' {  print $2 } ' | uniq | $WC -w`"
+		echo "`$CAT /etc/yum.conf /etc/yum.repos.d/*.repo | $GREP 'exclude' | $AWK -F '=' ' {  print $2 } ' | sort -u | $WC -w`"
 	fi
 }
 function yum_get_number_of_sources() {
