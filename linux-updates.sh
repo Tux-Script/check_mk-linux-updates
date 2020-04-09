@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.4.9
+# Version 1.4.10
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -190,8 +190,8 @@ function yum_get_list_all_updates() {
 #require yum-utils
 function yum_checkrestart() {
 	if $YUM list installed "yum-utils" -q &> /dev/null; then
-		nr_reload="`$NEEDSRESTARTING | $EGREP -v '^1 :' | $EGREP '[0-9]* :' | $WC -l`"
-		nr_reboot="`$NEEDSRESTARTING | $EGREP '^1 :' | $WC -l`"
+		nr_reload="`$NEEDSRESTARTING -s | $WC -l`"
+		nr_reboot="`$NEEDSRESTARTING -s | $EGREP "Reboot is required" | $WC -l`"
 		if [ $nr_reboot -gt 0 ]; then
 			restart="system reboot required"
 		fi
