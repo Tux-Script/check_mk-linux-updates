@@ -191,7 +191,7 @@ function yum_get_list_all_updates() {
 function yum_checkrestart() {
 	if $YUM list installed "yum-utils" -q &> /dev/null; then
 		nr_reload="`$NEEDSRESTARTING -s | $WC -l`"
-		nr_reboot="`$NEEDSRESTARTING -s | $EGREP "Reboot is required" | $WC -l`"
+		nr_reboot="`$NEEDSRESTARTING -r | $EGREP "Reboot is required" | $WC -l`"
 		if [ $nr_reboot -gt 0 ]; then
 			restart="system reboot required"
 		fi
