@@ -145,7 +145,7 @@ function zypper_get_list_all_updates() {
 	echo $list
 }
 function zypper_checkrestart() {
-	nr_reload="`$ZYPPER ps -s | $EGREP '^[0-9]* ' | $AWK -F '|' ' { print $6 } ' | sort -u | $EGREP " [a-zA-Z] | $WC -l`"
+	nr_reload="`$ZYPPER ps -s | $EGREP '^[0-9]* ' | $AWK -F '|' ' { print $6 } ' | sort -u | $EGREP " [a-zA-Z]" | $WC -l`"
 	nr_reboot="`$ZYPPER ps -s | $GREP -q 'kernel' | $WC -l`"
 	if [ $nr_reboot -gt 0 ]; then
 		restart="system reboot required"
