@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.4.11
+# Version 1.4.12
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -145,7 +145,7 @@ function zypper_get_list_all_updates() {
 	echo $list
 }
 function zypper_checkrestart() {
-	nr_reload="`$ZYPPER ps -s | $EGREP '^[0-9]* ' | $AWK -F '|' ' { print $6 } ' | sort -u | $WC -l`"
+	nr_reload="`$ZYPPER ps -s | $EGREP '^[0-9]* ' | $AWK -F '|' ' { print $6 } ' | sort -u | $EGREP " [a-zA-Z] | $WC -l`"
 	nr_reboot="`$ZYPPER ps -s | $GREP -q 'kernel' | $WC -l`"
 	if [ $nr_reboot -gt 0 ]; then
 		restart="system reboot required"
