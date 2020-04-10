@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.4.10
+# Version 1.4.11
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -97,7 +97,7 @@ function apt_checkrestart() {
 	rrpkgs_path="/var/run/reboot-required.pkgs"
 	restart=""
 	if $APT list 2>/dev/null | $GREP 'debian-goodies/' &>/dev/null; then
-		nr_reload="`$CHECKRESTART 2>/dev/null| $GREP restart | $WC -l`"
+		nr_reload="`$CHECKRESTART 2>/dev/null| $GREP restart | $EGREP "^s" | $WC -l`"
 		if  test -f "$rrpkgs_path" ; then
 			nr_reboot="`$CAT $rrpkgs_path | $WC -l`"
 			restart="$nr_reboot packages require system reboot"
