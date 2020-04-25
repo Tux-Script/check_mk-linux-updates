@@ -293,6 +293,18 @@ function dnf_check_updates() {
 	cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources"
 	cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources"
 }
+
+function detect_pkg_manager() {
+	pkgm="`which apt | awk -F '/' ' { print $NF} '; which zypper | awk -F '/' ' { print $NF} '; which dnf | awk -F '/' ' { print $NF} '; which yum | awk -F '/' ' { print $NF}  ' ; which apt-get | awk -F '/' ' { print $NF} '`"
+
+	if [[ -z $pkgm ]]; then
+	        pkgm="none"
+	else
+	        pkgm=(${pkgm[@]})
+	        pkgm="${pkgm[0]}"
+	fi
+	echo "$pkgm"
+}
 ################
 function generate_cmk_output() {
 	#last "\\n", because cmk append metrics thresholds information at last line
@@ -319,25 +331,50 @@ else
 	exit 0;
 fi
 
-#choose packagemanager of distribution
-case "$dist_id" in
-	debian|ubuntu|linuxmint|raspbian)
-		apt_check_updates
-		;;
-	*suse*|*sles*|*opensuse*)
-		zypper_check_updates
-		;;
-	*centos*|*rhel*|*ol*)
-		yum_check_updates
-		;;
-	*fedora*)
-		dnf_check_updates
-		;;
-	*)
-		cmk_describe="Distribution failed to detect - not on supported list, check for add ID from /etc/os-release to cmk-script."
-		cmk_describe_long="Distribution failed to detect - not on supported list,\\ncheck for add ID from /etc/os-release to cmk-script."
-		cmk_status=3
-		;;
+#Check packagemanager
+pkgm="`detect_pkg_manager`"
+
+#Check updates for packagemanager
+case "$pkgm" in
+	apt)
+               	apt_check_updates 
+                ;;
+        zypper)
+                zypper_check_updates
+                ;;
+        dnf)
+                dnf_check_updates
+                ;;
+        yum)
+                yum_check_updates
+                ;;
+	*)                
+		cmk_describe="Packagemanager not detected and not supported."
+                cmk_describe="Packagemanager not detected and not supported.\\nsupportet are apt, zypper, yum, dnf"
+		cmk_status=3	
+                ;;
 esac
+
+#choose packagemanager of distribution
+#case "$dist_id" in
+#	debian|ubuntu|linuxmint|raspbian)
+#		apt_check_updates
+#		;;
+#	*suse*|*sles*|*opensuse*)
+#		zypper_check_updates
+#		;;
+#	*centos*|*rhel*|*ol*)
+#		yum_check_updates
+#		;;
+#	*fedora*)
+#		dnf_check_updates
+#		;;
+#	*)
+#		cmk_describe="Distribution failed to detect - not on supported list, check for add ID from /etc/os-release to cmk-script."
+#		cmk_describe_long="Distribution failed to detect - not on supported list,\\ncheck for add ID from /etc/os-release to cmk-script."
+#		cmk_status=3
+#		;;
+#esac
+
 output;
 exit 0;
