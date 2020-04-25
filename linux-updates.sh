@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.5.0
+# Version 1.5.1
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -295,7 +295,7 @@ function dnf_check_updates() {
 }
 
 function detect_pkg_manager() {
-	pkgm="`which apt | awk -F '/' ' { print $NF} '; which zypper | awk -F '/' ' { print $NF} '; which dnf | awk -F '/' ' { print $NF} '; which yum | awk -F '/' ' { print $NF}  ' ; which apt-get | awk -F '/' ' { print $NF} '`"
+	pkgm="`which apt 2>/dev/null | awk -F '/' ' { print $NF} '; which zypper 2>/dev/null | awk -F '/' ' { print $NF} '; which dnf 2>/dev/null | awk -F '/' ' { print $NF} '; which yum 2>/dev/null | awk -F '/' ' { print $NF}  ' ; which apt-get 2>/dev/null | awk -F '/' ' { print $NF} '`"
 
 	if [[ -z $pkgm ]]; then
 	        pkgm="none"
