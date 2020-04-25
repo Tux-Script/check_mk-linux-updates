@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.4.12
+# Version 1.5.0
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -354,27 +354,6 @@ case "$pkgm" in
 		cmk_status=3	
                 ;;
 esac
-
-#choose packagemanager of distribution
-#case "$dist_id" in
-#	debian|ubuntu|linuxmint|raspbian)
-#		apt_check_updates
-#		;;
-#	*suse*|*sles*|*opensuse*)
-#		zypper_check_updates
-#		;;
-#	*centos*|*rhel*|*ol*)
-#		yum_check_updates
-#		;;
-#	*fedora*)
-#		dnf_check_updates
-#		;;
-#	*)
-#		cmk_describe="Distribution failed to detect - not on supported list, check for add ID from /etc/os-release to cmk-script."
-#		cmk_describe_long="Distribution failed to detect - not on supported list,\\ncheck for add ID from /etc/os-release to cmk-script."
-#		cmk_status=3
-#		;;
-#esac
 
 output;
 exit 0;
