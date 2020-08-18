@@ -4,13 +4,13 @@ This is a local script for check_mk to monitoring update-state of distributions 
 testet in cee-1.6.0 with SLES12, Oracle Linux 7, CentOS 7, Debian 9, Debian 10, Fedora 30
 
 ## Requirements
-* systemd-platform (for detect distribution /etc/os-release)
+* ~~systemd-platform (for detect distribution /etc/os-release)~~ but systemd-platform recommended
 * run as root
 * bash (which,cat,grep,egrep,wc,awk)
 * apt (debian-goodies) or zypper or yum (with yum-plugin-versionlock , yum-utils) or dnf (python3-dnf-plugin-versionlock)
 * extends the script by further distributions in section Main (with id from /etc/os-release), default distribution: Debian, Ubuntu, Linux Mint, raspbian, SLES12+, opensuse, Redhat, CentOS, OracleLinux
 
-## Featuresa
+## Features~~
 * detected packagemanager apt, zypper, dnf and yum
 * detected number of all updates
 * detected number of all security updates
