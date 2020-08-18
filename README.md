@@ -8,7 +8,7 @@ testet in cee-1.6.0 with SLES12, Oracle Linux 7, CentOS 7, Debian 9, Debian 10, 
 * run as root
 * bash (which,cat,grep,egrep,wc,awk)
 * apt (debian-goodies) or zypper or yum (with yum-plugin-versionlock , yum-utils) or dnf (python3-dnf-plugin-versionlock)
-* extends the script by further distributions in section Main (with id from /etc/os-release), default distribution: Debian, Ubuntu, Linux Mint, raspbian, SLES12+, opensuse, Redhat, CentOS, OracleLinux
+* ~~extends the script by further distributions in section Main (with id from /etc/os-release), default distribution: Debian, Ubuntu, Linux Mint, raspbian, SLES12+, opensuse, Redhat, CentOS, OracleLinux~~
 
 ## Features~~
 * detected packagemanager apt, zypper, dnf and yum
