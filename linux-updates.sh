@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.5.1
+# Version 1.6.0
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -231,6 +231,13 @@ function dnf_get_list_all_updates() {
 	done
 	echo $list
 }
+function dnf_checkrestart() {
+	nr_reboot="`$DNF needs-restarting -r | $EGREP "Reboot is required" | $WC -l`"
+	if [ $nr_reboot -gt 0 ]; then
+		restart="system reboot required"
+	fi
+}
+
 ###############
 function apt_check_updates() {
 	nr_updates=`apt_get_number_of_updates`
@@ -289,9 +296,11 @@ function dnf_check_updates() {
 	nr_sources=`dnf_get_number_of_sources`
 	list_updates=`dnf_get_list_all_updates`
 
-	cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit"
-	cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources"
-	cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources"
+	dnf_checkrestart
+
+	cmk_metrics="updates=$nr_updates;$updates_warn;$updates_crit|sec_updates=$nr_sec_updates;$updates_sec_warn;$updates_sec_crit|Sources=$nr_sources|Locks=$nr_locks;$locks_warn;$locks_crit|Reboot=$nr_reboot;$reboot_warn;$reboot_crit"
+	cmk_describe="$nr_updates Updates ($list_updates), $nr_sec_updates Security Updates, $nr_locks packets are locked, $nr_sources used Paket-Sources, $restart"
+	cmk_describe_long="$nr_updates Updates ($list_updates) \\n$nr_sec_updates Security Updates \\n$nr_locks packets are locked \\n$nr_sources used Paket-Sources \\n$restart"
 }
 
 function detect_pkg_manager() {
