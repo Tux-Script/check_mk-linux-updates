@@ -3,7 +3,6 @@
 #                                  CMK-Script for monitoring updates on linux                                   #
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
-# systemd-platform for distribution detect required
 # Version 1.6.1
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
