@@ -4,7 +4,7 @@
 #################################################################################################################
 # Supported are apt,dnf,yum,zypper on Debian|Ubuntu|Mint|raspbian, Fedora, RHEL|CentOS|OracleLinux, SLES|opensuse
 # systemd-platform for distribution detect required
-# Version 1.6.0
+# Version 1.6.1
 # Script by Dipl.-Inf. Christoph Pregla
 # License: GNU GPL v3
 # https://github.com/Tux-Script/check_mk-linux-updates
@@ -328,17 +328,6 @@ function output() {
 ###			MAIN			###
 ###################################################
 ###################################################
-
-#Check Systemd os-release file
-if test -f /etc/os-release ; then
-	dist_id=`$CAT /etc/os-release | $EGREP -i '^id=' | $AWK -F '=' ' { print $2 } '`
-else
-	cmk_describe="Distribution failed to detect - no systemd platform?"
-	cmk_describe_long="Distribution failed to detect - no systemd platform?"
-	cmk_status=3
-	output;
-	exit 0;
-fi
 
 #Check packagemanager
 pkgm="`detect_pkg_manager`"
