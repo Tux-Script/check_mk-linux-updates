@@ -13,7 +13,7 @@ testet in cee-1.6.0 with SLES12, SLES15, OEL 7, OEL 8, CentOS 7, CentOS 8, Debia
 * detected packagemanager apt, zypper, dnf and yum
 * detected number of all updates
 * detected number of all security updates
-* detected number of services or processes to reload
+* detected number of services or processes to reload (with dnf not available)
 * detected required system reboot
 * list all packages to update
 * create metrics
