@@ -1,7 +1,7 @@
 # check_mk-linux-updates
 This is a local script for check_mk to monitoring update-state of distributions with apt, zypper, yum or dnf
 
-testet in cee-1.6.0 with SLES12, Oracle Linux 7, CentOS 7, CentOS 8, Debian 9, Debian 10, Fedora 30
+testet in cee-1.6.0 with SLES12, OEL 7, OEL 8, CentOS 7, CentOS 8, Debian 9, Debian 10, Fedora 30
 
 ## Requirements
 * systemd-platform recommended
@@ -9,7 +9,7 @@ testet in cee-1.6.0 with SLES12, Oracle Linux 7, CentOS 7, CentOS 8, Debian 9, D
 * bash (which,cat,grep,egrep,wc,awk)
 * apt (debian-goodies) or zypper or yum (with yum-plugin-versionlock , yum-utils) or dnf (python3-dnf-plugin-versionlock)
 
-## Features~~
+## Features
 * detected packagemanager apt, zypper, dnf and yum
 * detected number of all updates
 * detected number of all security updates
