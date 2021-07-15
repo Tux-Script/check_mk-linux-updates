@@ -209,7 +209,7 @@ function yum_checkrestart() {
 }
 
 function dnf_get_number_of_updates() {
-	echo "`$DNF check-update | $EGREP -v '(^(Geladene|Loading| * )|\.src|Metadaten|metadata|running|available|Loaded)' | $WC -l`" 
+	echo "`$DNF check-update | $EGREP -v '(^(Geladene|Loading| * |$)|\.src|Metadaten|metadata|running|available|Loaded)' | $WC -l`" 
 }
 function dnf_get_number_of_sec_updates() {
 	echo "`$DNF check-update | $EGREP '^Security' | $GREP -v 'running' | $AWK ' { print $2 } ' | $WC -l`"
