@@ -15,7 +15,6 @@ testet in cee-1.6.0 with SLES12, SLES15, OEL 7, OEL 8, CentOS 7, CentOS 8, Debia
 * detected number of all security updates
 * detected number of services or processes to reload
 * detected required system reboot
-* detected number of package locks 
 * list all packages to update
 * create metrics
 * creates status based on the thresholds for the metrics
