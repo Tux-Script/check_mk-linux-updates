@@ -15,7 +15,7 @@ only supportet english or german platform
 * detected packagemanager apt, zypper, dnf and yum
 * detected number of all updates
 * detected number of all security updates
-* detected number of services or processes to reload (with dnf not available)
+* detected number of services or processes to required reload (with dnf not available)
 * detected required system reboot
 * list all packages to update
 * create metrics
