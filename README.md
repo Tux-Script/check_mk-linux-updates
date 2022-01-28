@@ -1,7 +1,12 @@
 # check_mk-linux-updates
 This is a local script for check_mk to monitoring update-state of distributions with apt, zypper, yum or dnf
 
-testet in cee-1.6.0 with SLES12, SLES15, OEL 7, OEL 8, CentOS 7, CentOS 8, Debian 9, Debian 10, Fedora 30
+testet in cee-1.6.0 with 
+* SLES 12,15
+* Oracle Enterprise Linux 7, 8
+* CentOS 7, 8
+* Debian 9, 10, 11
+* Fedora 30
 
 only supportet english or german platform
 
